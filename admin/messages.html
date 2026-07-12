@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Messages | WolfHustler Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="brand">WOLFHUSTLER</div>
+    <a href="/admin/dashboard.html">Dashboard</a>
+    <a href="/admin/drafts.html">Drafts</a>
+    <a href="/admin/products.html">Published</a>
+    <a href="/admin/upload.html">Upload product</a>
+    <a href="/admin/settings.html">Pinterest settings</a>
+    <a href="/admin/messages.html" class="active">Messages</a>
+    <a href="#" class="logout-link">Log out (<span id="admin-username"></span>)</a>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-header">
+      <div>
+        <h1>Contact messages</h1>
+        <p>Submissions from the site's contact form.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <table>
+        <thead><tr><th></th><th>From</th><th>Subject</th><th>Message</th><th>Received</th><th></th></tr></thead>
+        <tbody id="messages-body"><tr><td colspan="6" class="empty-state">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script src="admin.js"></script>
+<script>
+async function loadMessages() {
+  const messages = await api("/admin/messages");
+  const body = document.getElementById("messages-body");
+  if (messages.length === 0) {
+    body.innerHTML = `<tr><td colspan="6" class="empty-state">No messages yet.</td></tr>`;
+    return;
+  }
+  body.innerHTML = messages
+    .map(
+      (m) => `<tr style="${m.is_read ? '' : 'background:rgba(197,168,128,0.06);'}">
+        <td>${m.is_read ? '' : '<span class="badge draft">new</span>'}</td>
+        <td>${escapeHtml(m.name)}<br><span style="color:var(--text-muted);font-size:11px;">${escapeHtml(m.email)}</span></td>
+        <td>${escapeHtml(m.subject || '—')}</td>
+        <td style="max-width:320px;white-space:pre-wrap;">${escapeHtml(m.message)}</td>
+        <td>${timeAgo(m.created_at)}</td>
+        <td>
+          ${m.is_read ? '' : `<button class="btn btn-secondary btn-sm" data-read="${m.id}">Mark read</button>`}
+          <button class="btn btn-danger btn-sm" data-delete="${m.id}">Delete</button>
+        </td>
+      </tr>`
+    )
+    .join("");
+
+  body.querySelectorAll("[data-read]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      await api(`/admin/messages/${btn.dataset.read}/read`, { method: "POST" });
+      loadMessages();
+    });
+  });
+  body.querySelectorAll("[data-delete]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      if (!confirm("Delete this message?")) return;
+      await api(`/admin/messages/${btn.dataset.delete}`, { method: "DELETE" });
+      loadMessages();
+    });
+  });
+}
+
+(async function () {
+  await requireLogin();
+  await loadMessages();
+})();
+</script>
+</body>
+</html>

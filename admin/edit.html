@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit product | WolfHustler Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="brand">WOLFHUSTLER</div>
+    <a href="/admin/dashboard.html">Dashboard</a>
+    <a href="/admin/drafts.html">Drafts</a>
+    <a href="/admin/products.html">Published</a>
+    <a href="/admin/upload.html">Upload product</a>
+    <a href="/admin/settings.html">Pinterest settings</a>
+    <a href="/admin/messages.html">Messages</a>
+    <a href="#" class="logout-link">Log out (<span id="admin-username"></span>)</a>
+  </aside>
+
+  <main class="admin-main" style="max-width: 640px;">
+    <div class="admin-header">
+      <div>
+        <h1>Edit product</h1>
+        <p id="source-note"></p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <button type="button" class="btn ai-toggle-btn" id="ai-toggle-btn" style="margin-bottom: 18px;">✨ AI Suggest (title, description, bullets &amp; front image)</button>
+
+      <div class="ai-panel" id="ai-panel">
+        <h3>Ask the AI</h3>
+        <p class="ai-sub">Type the product or niche — the AI checks what's trending right now and drafts listing copy for you. It's pre-filled with the current title.</p>
+        <div class="row">
+          <input type="text" id="ai-query" placeholder="e.g. minimalist chronograph watch">
+          <button type="button" class="btn btn-primary" id="ai-search-btn" style="flex: 0 0 auto;">Get suggestions</button>
+        </div>
+        <p class="ai-status" id="ai-status"></p>
+        <div class="ai-result" id="ai-result"></div>
+      </div>
+
+      <form id="edit-form">
+        <label>Title</label>
+        <input type="text" id="title" required>
+
+        <label>Product images (up to 5 — the first one is the front image shown on the site)</label>
+        <div class="image-list" id="image-list"></div>
+        <button type="button" class="btn btn-secondary btn-sm add-image-btn" id="add-image-btn">+ Add another image</button>
+
+        <label>Short description</label>
+        <textarea id="description"></textarea>
+
+        <label>Feature bullets (optional, Amazon-style, up to 5)</label>
+        <div id="bullet-list"></div>
+        <button type="button" class="btn btn-secondary btn-sm add-image-btn" id="add-bullet-btn">+ Add bullet</button>
+
+        <label>Amazon / affiliate link</label>
+        <input type="text" id="affiliate_link" placeholder="https://amzn.to/...">
+
+        <div class="row">
+          <div>
+            <label>Category</label>
+            <select id="category">
+              <option value="watches">Watches</option>
+              <option value="mens-fashion">Men's Fashion</option>
+              <option value="fragrances">Fragrances</option>
+              <option value="travel-essentials">Travel Essentials</option>
+              <option value="uncategorized">Uncategorized</option>
+            </select>
+          </div>
+          <div>
+            <label>Price (optional, just for your reference)</label>
+            <input type="text" id="price" placeholder="$49">
+          </div>
+        </div>
+
+        <div class="row" style="margin-top: 10px;">
+          <button type="submit" class="btn btn-primary" data-action="save">Save as draft</button>
+          <button type="submit" class="btn btn-primary" data-action="publish">Save &amp; publish</button>
+          <button type="button" class="btn btn-danger" id="delete-btn">Delete</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+
+<script src="admin.js"></script>
+<script>
+const params = new URLSearchParams(location.search);
+const id = params.get("id");
+let currentStatus = "draft";
+
+const imageList = document.getElementById("image-list");
+const bulletList = document.getElementById("bullet-list");
+
+wireAiSuggestPanel({
+  toggleBtn: document.getElementById("ai-toggle-btn"),
+  panel: document.getElementById("ai-panel"),
+  searchInput: document.getElementById("ai-query"),
+  searchBtn: document.getElementById("ai-search-btn"),
+  statusEl: document.getElementById("ai-status"),
+  resultEl: document.getElementById("ai-result"),
+  getCategory: () => document.getElementById("category").value,
+  getImages: () => getImagesFromUI(imageList),
+  applyTitle: (v) => { document.getElementById("title").value = v; showToast("Title applied."); },
+  applyDescription: (v) => { document.getElementById("description").value = v; showToast("Description applied."); },
+  applyBullets: (arr) => { setBulletsInUI(bulletList, arr); showToast("Bullets applied."); },
+  applyFrontImage: (idx) => { makeImageFront(imageList, idx); showToast("Front image updated."); },
+});
+
+document.getElementById("add-image-btn").addEventListener("click", () => addImageRow(imageList, ""));
+document.getElementById("add-bullet-btn").addEventListener("click", () => addBulletRow(bulletList, ""));
+
+async function load() {
+  if (!id) { showToast("No product id given."); return; }
+  const p = await api(`/admin/products/${id}`);
+  currentStatus = p.status;
+  document.getElementById("title").value = p.title || "";
+  renderImageRows(imageList, (p.images && p.images.length) ? p.images : (p.image_url ? [p.image_url] : [""]));
+  renderBulletRows(bulletList, p.bullets || []);
+  document.getElementById("description").value = p.description || "";
+  document.getElementById("affiliate_link").value = p.affiliate_link || "";
+  document.getElementById("category").value = p.category || "uncategorized";
+  document.getElementById("price").value = p.price || "";
+  document.getElementById("ai-query").value = p.title || "";
+  document.getElementById("source-note").textContent =
+    p.source === "pinterest"
+      ? `Came from a Pinterest pin. ${p.status === 'draft' ? 'Add the affiliate link, then publish.' : 'Currently published.'}`
+      : `Added manually. Status: ${p.status}.`;
+}
+
+document.getElementById("edit-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const action = e.submitter?.dataset.action || "save";
+  const affiliate_link = document.getElementById("affiliate_link").value.trim();
+
+  if (action === "publish" && !affiliate_link) {
+    showToast("Add an affiliate link before publishing.");
+    return;
+  }
+
+  const images = getImagesFromUI(imageList);
+
+  await api(`/admin/products/${id}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      title: document.getElementById("title").value,
+      image_url: images[0] || "",
+      images,
+      description: document.getElementById("description").value,
+      bullets: getBulletsFromUI(bulletList),
+      affiliate_link,
+      category: document.getElementById("category").value,
+      price: document.getElementById("price").value,
+      status: action === "publish" ? "published" : currentStatus,
+    }),
+  });
+
+  showToast(action === "publish" ? "Published!" : "Saved.");
+  setTimeout(() => (location.href = action === "publish" ? "/admin/products.html" : "/admin/drafts.html"), 700);
+});
+
+document.getElementById("delete-btn").addEventListener("click", async () => {
+  if (!confirm("Delete this product for good?")) return;
+  await api(`/admin/products/${id}`, { method: "DELETE" });
+  location.href = "/admin/drafts.html";
+});
+
+(async function () {
+  await requireLogin();
+  await load();
+})();
+</script>
+</body>
+</html>

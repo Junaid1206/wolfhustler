@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WOLFHUSTLER | Built In Silence</title>
+    <meta name="description" content="Curated luxury essentials for ambitious men — watches, fashion, fragrances and travel gear. Built in silence.">
+    <!-- Google Fonts for Luxury Aesthetic -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 1. NAVIGATION HEADER -->
+    <header class="navbar">
+        <div class="logo">
+            <img class="logo_img" src="logo.png" alt="WOLFHUSTLER">
+        </div>
+        
+        <!-- Hamburger Toggle for Mobile/Tablet -->
+        <div class="menu-toggle" id="mobile-menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <nav class="nav-links" id="nav-menu">
+            <a href="index.html" class="active">HOME</a>
+            <a href="about.html">ABOUT</a>
+            <a href="watches.html">WATCHES</a>
+            <a href="mens-fashion.html">MEN'S FASHION</a>
+            <a href="fragrances.html">FRAGRANCES</a>
+            <a href="travel-essentials.html">TRAVEL ESSENTIALS</a>
+            
+        </nav>
+        
+        <div class="nav-icons">
+            <!-- Premium Minimalist Search Icon -->
+            <button class="icon-btn" aria-label="Search">
+                <svg class="nav-icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </button>
+            
+            <!-- Premium Luxury Shopping Bag Icon -->
+            <button class="icon-btn" aria-label="Cart">
+                <svg class="nav-icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 22h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"></path>
+                    <path d="M16 10a4 4 0 0 0-8 0"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- 2. HERO SECTION -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">WOLFHUSTLER</h1>
+            <p class="hero-subtitle">BUILT IN SILENCE.</p>
+            <p class="hero-tagline">Curated luxury essentials for ambitious men.</p>
+            <a href="#" class="cta-button">EXPLORE COLLECTION <span class="arrow">→</span></a>
+        </div>
+    </section>
+
+<!-- Section: 4-Column Category Image Overlay (Right Aligned Text) -->
+<section class="categories-section">
+    <div class="categories-grid">
+        
+        <!-- Box 1: Watches -->
+        <div class="category-box" style="background-image: url('https://i.pinimg.com/1200x/58/85/2c/58852c3e77c2aae740072c6c69d9c3ae.jpg');">
+            <div class="box-overlay">
+                <div class="box-content">
+                    <svg class="box-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.2">
+                        <circle cx="12" cy="12" r="6"/>
+                        <path d="M12 2v4M12 18v4M12 9v3h2"/>
+                    </svg>
+                    <h3 class="box-title">WATCHES</h3>
+                    <p class="box-desc">Timeless pieces. Built to last.</p>
+                    <a href="watches.html" class="box-link">EXPLORE <span class="arrow">→</span></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Box 2: Men's Fashion -->
+        <div class="category-box" style="background-image: url('https://i.pinimg.com/webp/1200x/0f/40/a6/0f40a68b6c6afbfa1a72974adc89ce14.webp');">
+            <div class="box-overlay">
+                <div class="box-content">
+                    <svg class="box-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.2">
+                        <path d="M6 2L9 5L12 3L15 5L18 2L22 6L19 10V21H5V10L2 6L6 2Z"/>
+                    </svg>
+                    <h3 class="box-title">MEN'S FASHION</h3>
+                    <p class="box-desc">Style is silent. confidence is loud.</p>
+                    <a href="mens-fashion.html" class="box-link">EXPLORE <span class="arrow">→</span></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Box 3: Fragrances -->
+        <div class="category-box" style="background-image: url('https://i.pinimg.com/webp/1200x/d6/98/82/d69882ec496a015ccbc25ba75d9e765a.webp');">
+            <div class="box-overlay">
+                <div class="box-content">
+                    <svg class="box-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.2">
+                        <rect x="6" y="8" width="12" height="13" rx="1.5"/>
+                        <path d="M10 4h4v4h-4z"/>
+                    </svg>
+                    <h3 class="box-title">FRAGRANCES</h3>
+                    <p class="box-desc">Leave a mark without a word.</p>
+                    <a href="fragrances.html" class="box-link">EXPLORE <span class="arrow">→</span></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Box 4: Travel Essentials -->
+        <div class="category-box" style="background-image: url('https://i.pinimg.com/736x/14/7d/89/147d89c48d27c96d31c53e02e624834e.jpg');">
+            <div class="box-overlay">
+                <div class="box-content">
+                    <svg class="box-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.2">
+                        <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L14 19v-5.5l8 2.5z"/>
+                    </svg>
+                    <h3 class="box-title">TRAVEL ESSENTIALS</h3>
+                    <p class="box-desc">For the journey that defines you.</p>
+                    <a href="travel-essentials.html" class="box-link">EXPLORE <span class="arrow">→</span></a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<!-- Section: about us -->
+<section class="about-section">
+
+    <div class="container">
+
+    <div class="left-content">
+
+    <span class="subtitle">
+    ABOUT WOLFHUSTLER
+    </span>
+
+    <h2>
+    Decoding the 0.1%
+    <span>Lifestyle.</span>
+    </h2>
+
+    <p class="tagline">
+    CURATED FOR MEN. BUILT FOR MORE.
+    </p>
+
+    <p>
+    At WolfHustler, we believe that privacy is the ultimate luxury, but style shouldn't require a fortune. We hunt down the finest men's essentials—from dapper outerwear to stealth-wealth accessories—and bring you the billionaire aesthetic at an accessible value. Curated in silence, built for the ambitious.
+    </p>
+
+    <p class="highlight">
+    Just curated recommendations for men who appreciate quality,
+    discipline, and timeless style.
+    </p>
+
+    </div>
+
+
+
+    </div>
+
+    <div class="features">
+
+    <div class="feature">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <h4>CAREFUL RESEARCH</h4>
+    <p>
+    We analyze dozens of products to find only the best options.
+    </p>
+    </div>
+
+    <div class="feature">
+    <i class="fa-solid fa-award"></i>
+    <h4>QUALITY FIRST</h4>
+    <p>
+    Premium products selected for performance and long-term value.
+    </p>
+    </div>
+
+    <div class="feature">
+    <i class="fa-solid fa-tags"></i>
+    <h4>BEST VALUE</h4>
+    <p>
+    Luxury aesthetics and premium feel without luxury pricing.
+    </p>
+    </div>
+
+    <div class="feature">
+    <i class="fa-solid fa-shield-halved"></i>
+    <h4>TRUSTED PICKS</h4>
+    <p>
+    Honest recommendations and curated products you can trust.
+    </p>
+    </div>
+
+    </div>
+
+</section>
+
+<!-- Section: Editor's Picks (30% Text / 70% Functional Carousel) -->
+<section class="editors-picks-section">
+    <div class="picks-container">
+        
+        <!-- LEFT SIDE: Text Content -->
+        <div class="picks-text-side">
+            <span class="picks-tag">EDITOR'S PICKS</span>
+            <h2 class="picks-title">Handpicked. Tested. Trusted.</h2>
+            <p class="picks-desc">Every product in WolfHustler is carefully selected to elevate your lifestyle and reflect your standards.</p>
+            <a href="#" class="picks-view-btn">VIEW ALL PICKS</a>
+        </div>
+
+        <!-- RIGHT SIDE: Carousel Window -->
+        <div class="picks-carousel-side">
+            <div class="carousel-header">
+                <div class="carousel-arrows">
+                    <button class="arrow-btn" id="prev-btn" aria-label="Previous">&#8592;</button>
+                    <button class="arrow-btn" id="next-btn" aria-label="Next">&#8594;</button>
+                </div>
+            </div>
+
+            <div class="carousel-window">
+                <div class="carousel-track" id="carousel-track">
+                    
+                    <!-- Card 1 -->
+                    <div class="product-card">
+                        <div class="p-card-img-wrapper">
+                            <img src="https://i.pinimg.com/736x/38/08/cf/3808cfc400dc5183cc920a4b90fae2bb.jpg" alt="Minimalist Watch">
+                        </div>
+                        <div class="p-card-info">
+                            <h3>Minimalist Watches</h3>
+                            <p>Understated. Unmatched.</p>
+                            <a href="#" class="p-card-link">VIEW PICKS &rarr;</a>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="product-card">
+                        <div class="p-card-img-wrapper">
+                            <img src="https://i.pinimg.com/736x/cc/db/b6/ccdbb602a26eb044410ef53a3ff5f3f0.jpg" alt="Premium Wallet">
+                        </div>
+                        <div class="p-card-info">
+                            <h3>Premium Wallets</h3>
+                            <p>Carry less. Carry better.</p>
+                            <a href="#" class="p-card-link">VIEW PICKS &rarr;</a>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="product-card">
+                        <div class="p-card-img-wrapper">
+                            <img src="https://i.pinimg.com/736x/1b/f3/d0/1bf3d0c7a29d4a00761d097ee7af275a.jpg" alt="Signature Fragrance">
+                        </div>
+                        <div class="p-card-info">
+                            <h3>Signature Fragrances</h3>
+                            <p>Scent is your signature.</p>
+                            <a href="#" class="p-card-link">VIEW PICKS &rarr;</a>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="product-card">
+                        <div class="p-card-img-wrapper">
+                            <img src="https://i.pinimg.com/1200x/25/2e/b2/252eb2c9247e464daa50b61c8a1c7252.jpg" alt="Elite Audio Gear">
+                        </div>
+                        <div class="p-card-info">
+                            <h3>Acoustic Luxury</h3>
+                            <p>Sound for the focused mind.</p>
+                            <a href="#" class="p-card-link">VIEW PICKS &rarr;</a>
+                        </div>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="product-card">
+                        <div class="p-card-img-wrapper">
+                            <img src="https://i.pinimg.com/1200x/95/c2/c3/95c2c3268ff0ac133d9def31b5f7e778.jpg" alt="Leather Bag">
+                        </div>
+                        <div class="p-card-info">
+                            <h3>Travel Briefcase</h3>
+                            <p>Command the boardroom.</p>
+                            <a href="#" class="p-card-link">VIEW PICKS &rarr;</a>
+                        </div>
+                    </div>
+
+                    <!-- Card 6 -->
+                    <div class="product-card">
+                        <div class="p-card-img-wrapper">
+                            <img src="https://i.pinimg.com/736x/c7/d8/02/c7d802efc51042d3d5bf66c9e4ccee35.jpg" alt="Tactical Backpack">
+                        </div>
+                        <div class="p-card-info">
+                            <h3>Stealth Backpacks</h3>
+                            <p>Functionality meets luxury.</p>
+                            <a href="#" class="p-card-link">VIEW PICKS &rarr;</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section class="luxury-quote-banner reveal-element">
+    <div class="quote-overlay"></div>
+    <div class="quote-content">
+        <p class="main-quote">“Discipline today, freedom tomorrow.”</p>
+        <span class="quote-author">— WOLFHUSTLER</span>
+    </div>
+</section>
+
+<section class="trust-badges-bar reveal-element">
+    <div class="badge-item">
+        <div class="badge-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c5a880" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="badge-texts">
+            <h4>AUTHENTIC RECOMMENDATIONS</h4>
+            <p>We only recommend what we would use ourselves.</p>
+        </div>
+    </div>
+    
+    <div class="badge-item">
+        <div class="badge-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c5a880" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+        </div>
+        <div class="badge-texts">
+            <h4>QUALITY FIRST</h4>
+            <p>Premium products for high standards.</p>
+        </div>
+    </div>
+
+    <div class="badge-item">
+        <div class="badge-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c5a880" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="badge-texts">
+            <h4>SECURE SHOPPING</h4>
+            <p>Your security and privacy are our priority.</p>
+        </div>
+    </div>
+
+    <div class="badge-item">
+        <div class="badge-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c5a880" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div class="badge-texts">
+            <h4>HERE TO HELP</h4>
+            <p>Need help choosing? We've got you.</p>
+        </div>
+    </div>
+</section>
+
+<footer class="site-footer">
+    <div class="footer-container">
+        <div class="footer-col brand-col">
+            <div class="footer-logo">
+                 <img class="logo_img_footer" src="logo.png" alt="WOLFHUSTLER">
+            </div>
+        </div>
+
+        <div class="footer-col">
+            <h3>QUICK LINKS</h3>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="watches.html">Watches</a></li>
+                <li><a href="mens-fashion.html">Men's Fashion</a></li>
+                <li><a href="fragrances.html">Fragrances</a></li>
+                <li><a href="travel-essentials.html">Travel Essentials</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h3>HELP</h3>
+            <ul>
+                <li><a href="contact.html">Contact Us</a></li>
+                <li><a href="shipping-returns.html">Shipping & Returns</a></li>
+                <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                <li><a href="terms.html">Terms & Conditions</a></li>
+                <li><a href="affiliate-disclosure.html">Affiliate Disclosure</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col newsletter-col">
+            <h3>JOIN THE MOVEMENT</h3>
+            <p>Get exclusive picks, updates and inspiration straight to your inbox.</p>
+            <form class="newsletter-form">
+                <input type="email" placeholder="Enter your email" required>
+                <button type="submit">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+            </form>
+            <div class="social-icons">
+                <a href="#" aria-label="Instagram">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                </a>
+                <a href="#" aria-label="Pinterest">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.75 21c-.13-.76-.23-1.93.04-2.76l1.6-6.81s-.41-.82-.41-2.03c0-1.91 1.1-3.33 2.48-3.33 1.17 0 1.73.88 1.73 1.93 0 1.18-.75 2.94-1.14 4.58-.32 1.37.69 2.49 2.03 2.49 2.44 0 4.32-2.58 4.32-6.29 0-3.29-2.36-5.59-5.74-5.59-3.91 0-6.2 2.93-6.2 5.96 0 1.18.45 2.44 1.02 3.13.11.14.13.25.1.39l-.38 1.55c-.06.25-.2.31-.47.19-1.75-.81-2.85-3.37-2.85-5.43 0-4.42 3.21-8.48 9.27-8.48 4.86 0 8.64 3.47 8.64 8.1 0 4.83-3.05 8.72-7.28 8.72-1.42 0-2.76-.74-3.21-1.61l-.87 3.33c-.32 1.22-1.18 2.76-1.75 3.69A1 1 0 0 1 8.75 21z"/></svg>
+                </a>
+                <a href="#" aria-label="YouTube">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
+                </a>
+                <a href="#" aria-label="Facebook">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <p>&copy; 2026 WOLFHUSTLER. ALL RIGHTS RESERVED.</p>
+    </div>
+</footer>
+
+<script src="script.js"></script>  
+<script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+<script>
+    const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        direction: 'vertical',
+        gestureDirection: 'vertical',
+        smooth: true,
+        mouseMultiplier: 1,
+        smoothTouch: false
+    })
+
+    function raf(time) {
+        lenis.raf(time)
+        requestAnimationFrame(raf)
+    }
+    requestAnimationFrame(raf)
+</script> 
+</body>
+</html>

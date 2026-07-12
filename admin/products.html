@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Published | WolfHustler Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="brand">WOLFHUSTLER</div>
+    <a href="/admin/dashboard.html">Dashboard</a>
+    <a href="/admin/drafts.html">Drafts</a>
+    <a href="/admin/products.html" class="active">Published</a>
+    <a href="/admin/upload.html">Upload product</a>
+    <a href="/admin/settings.html">Pinterest settings</a>
+    <a href="/admin/messages.html">Messages</a>
+    <a href="#" class="logout-link">Log out (<span id="admin-username"></span>)</a>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-header">
+      <div>
+        <h1>Published products</h1>
+        <p>Live on the site right now.</p>
+      </div>
+      <a href="/admin/upload.html" class="btn btn-primary">+ Add product</a>
+    </div>
+
+    <div class="panel">
+      <table>
+        <thead><tr><th></th><th>Title</th><th>Category</th><th>Price</th><th></th><th></th></tr></thead>
+        <tbody id="products-body"><tr><td colspan="6" class="empty-state">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script src="admin.js"></script>
+<script>
+async function loadProducts() {
+  const products = await api("/admin/products?status=published");
+  const body = document.getElementById("products-body");
+  if (products.length === 0) {
+    body.innerHTML = `<tr><td colspan="6" class="empty-state">Nothing published yet.</td></tr>`;
+    return;
+  }
+  body.innerHTML = products
+    .map(
+      (p) => `<tr>
+        <td><img class="thumb" src="${escapeHtml(p.image_url || '')}" onerror="this.style.visibility='hidden'"></td>
+        <td>${escapeHtml(p.title)}</td>
+        <td>${escapeHtml(p.category)}</td>
+        <td>${escapeHtml(p.price || '—')}</td>
+        <td><a class="btn btn-secondary btn-sm" href="/admin/edit.html?id=${p.id}">Edit</a></td>
+        <td><button class="btn btn-danger btn-sm" data-id="${p.id}">Unpublish</button></td>
+      </tr>`
+    )
+    .join("");
+
+  body.querySelectorAll("button[data-id]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      await api(`/admin/products/${btn.dataset.id}`, {
+        method: "PUT",
+        body: JSON.stringify({ status: "draft" }),
+      });
+      showToast("Moved back to drafts");
+      loadProducts();
+    });
+  });
+}
+
+(async function () {
+  await requireLogin();
+  await loadProducts();
+})();
+</script>
+</body>
+</html>

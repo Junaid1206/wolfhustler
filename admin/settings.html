@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pinterest Settings | WolfHustler Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="brand">WOLFHUSTLER</div>
+    <a href="/admin/dashboard.html">Dashboard</a>
+    <a href="/admin/drafts.html">Drafts</a>
+    <a href="/admin/products.html">Published</a>
+    <a href="/admin/upload.html">Upload product</a>
+    <a href="/admin/settings.html" class="active">Pinterest settings</a>
+    <a href="/admin/messages.html">Messages</a>
+    <a href="#" class="logout-link">Log out (<span id="admin-username"></span>)</a>
+  </aside>
+
+  <main class="admin-main" style="max-width: 640px;">
+    <div class="admin-header">
+      <div>
+        <h1>Pinterest settings</h1>
+        <p>Connect your account and choose which board to pull pins from.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Connection status</h2>
+      <p id="status-text" style="color:var(--text-muted); font-size:13px; margin-bottom:16px;">Checking…</p>
+      <a href="/admin/pinterest/connect" class="btn btn-primary" id="connect-btn">Connect Pinterest account</a>
+    </div>
+
+    <div class="panel" id="board-panel" style="display:none;">
+      <h2>Board to sync</h2>
+      <select id="board-select"></select>
+      <button class="btn btn-secondary" id="save-board-btn">Use this board</button>
+    </div>
+
+    <div class="panel">
+      <h2>How this works</h2>
+      <p style="color:var(--text-muted); font-size:13px; line-height:1.6;">
+        Pinterest doesn't push new pins to other apps in real time, so this connects to your account
+        via Pinterest's official login, then pulls the latest pins from the board you choose. It syncs
+        automatically every 30 minutes, or you can press "Sync Pinterest now" on the Drafts page any time.
+        Each new pin appears as a draft — nothing goes live on the site until you add an affiliate link
+        and publish it.
+      </p>
+    </div>
+  </main>
+</div>
+
+<script src="admin.js"></script>
+<script>
+(async function () {
+  await requireLogin();
+
+  const params = new URLSearchParams(location.search);
+  if (params.get("pinterest") === "connected") showToast("Pinterest connected!");
+  if (params.get("pinterest") === "error") showToast("Pinterest connection failed. Check your .env credentials.");
+
+  const status = await api("/admin/pinterest/status");
+  const statusText = document.getElementById("status-text");
+  const connectBtn = document.getElementById("connect-btn");
+  const boardPanel = document.getElementById("board-panel");
+
+  if (status.connected) {
+    statusText.textContent = status.account.board_name
+      ? `Connected. Currently syncing from board: "${status.account.board_name}".`
+      : "Connected. Pick a board below to start syncing.";
+    connectBtn.textContent = "Reconnect Pinterest account";
+    boardPanel.style.display = "block";
+
+    try {
+      const boards = await api("/admin/pinterest/boards");
+      const select = document.getElementById("board-select");
+      select.innerHTML = boards
+        .map((b) => `<option value="${b.id}" ${b.id === status.account.board_id ? "selected" : ""}>${escapeHtml(b.name)}</option>`)
+        .join("");
+
+      document.getElementById("save-board-btn").addEventListener("click", async () => {
+        const opt = select.selectedOptions[0];
+        await api("/admin/pinterest/board", {
+          method: "POST",
+          body: JSON.stringify({ board_id: opt.value, board_name: opt.textContent }),
+        });
+        showToast("Board saved. Go to Drafts and hit Sync.");
+      });
+    } catch (e) {
+      document.getElementById("board-select").outerHTML = `<p class="error-text">${e.message}</p>`;
+    }
+  } else {
+    statusText.textContent = "Not connected yet.";
+  }
+})();
+</script>
+</body>
+</html>

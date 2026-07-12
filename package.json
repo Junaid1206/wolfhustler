@@ -1,0 +1,19 @@
+{
+  "name": "wolfhustler-admin",
+  "version": "1.0.0",
+  "description": "WolfHustler affiliate site + Pinterest-to-draft pipeline + admin dashboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.3.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "express-session": "^1.18.0",
+    "node-cron": "^3.0.3"
+  }
+}

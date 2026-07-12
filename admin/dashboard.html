@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard | WolfHustler Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="brand">WOLFHUSTLER</div>
+    <a href="/admin/dashboard.html" class="active">Dashboard</a>
+    <a href="/admin/drafts.html">Drafts</a>
+    <a href="/admin/products.html">Published</a>
+    <a href="/admin/upload.html">Upload product</a>
+    <a href="/admin/settings.html">Pinterest settings</a>
+    <a href="/admin/messages.html">Messages</a>
+    <a href="#" class="logout-link">Log out (<span id="admin-username"></span>)</a>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-header">
+      <div>
+        <h1>Dashboard</h1>
+        <p>Who's visiting the site and what they're checking out.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="admin-header" style="margin-bottom: 4px;">
+        <div>
+          <h2>✨ Trend research — what should I sell right now?</h2>
+          <p class="ai-sub" id="trend-auto-note">Runs automatically each time you open the dashboard — searches the web for what's trending and drafts 4 product ideas, ready to send straight to Upload.</p>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" id="trend-refresh-btn">↻ Refresh now</button>
+      </div>
+      <div class="row" style="margin-top: 10px;">
+        <input type="text" id="trend-query" placeholder="Optional: narrow it down, e.g. watches, mens-fashion, travel gear for summer 2026">
+        <button type="button" class="btn btn-primary" id="trend-search-btn" style="flex: 0 0 auto;">Research this</button>
+      </div>
+      <p class="ai-status" id="trend-status"></p>
+      <div class="trend-ideas-grid" id="trend-ideas-grid"></div>
+
+      <div id="trend-news-wrap" style="display:none; margin-top:18px; padding-top:16px; border-top:1px solid var(--border);">
+        <h3 style="font-size:13px; color: var(--accent-gold); margin-bottom:10px;">Related news &amp; sources the AI checked</h3>
+        <ul id="trend-news-list" style="list-style:none; display:flex; flex-direction:column; gap:8px;"></ul>
+      </div>
+    </div>
+
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card"><div class="value">—</div><div class="label">Visitors today</div></div>
+      <div class="stat-card"><div class="value">—</div><div class="label">Total visitors</div></div>
+      <div class="stat-card"><div class="value">—</div><div class="label">Page views</div></div>
+      <div class="stat-card"><div class="value">—</div><div class="label">Affiliate clicks</div></div>
+      <div class="stat-card"><div class="value">—</div><div class="label">Drafts waiting</div></div>
+      <div class="stat-card"><div class="value">—</div><div class="label">Published products</div></div>
+      <div class="stat-card"><div class="value">—</div><div class="label">Unread messages</div></div>
+    </div>
+
+    <div class="panel">
+      <h2>Most viewed products</h2>
+      <table id="top-products-table">
+        <thead><tr><th></th><th>Product</th><th>Status</th><th>Views</th><th>Clicks</th></tr></thead>
+        <tbody><tr><td colspan="5" class="empty-state">Loading…</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2>Recent activity</h2>
+      <table id="activity-table">
+        <thead><tr><th>Visitor</th><th>Action</th><th>Product</th><th>When</th></tr></thead>
+        <tbody><tr><td colspan="4" class="empty-state">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script src="admin.js"></script>
+<script>
+const TREND_CACHE_KEY = "wh_trend_cache";
+const TREND_CACHE_MAX_AGE_MS = 6 * 60 * 60 * 1000; // 6 hours — avoids burning API calls on every single page refresh
+
+function renderTrendIdeas(ideas) {
+  const grid = document.getElementById("trend-ideas-grid");
+  grid.innerHTML = ideas.map((idea, i) => `
+    <div class="trend-idea-card">
+      <h4>${escapeHtml(idea.title || "")}</h4>
+      ${idea.why_trending ? `<div class="why">${escapeHtml(idea.why_trending)}</div>` : ""}
+      <div class="desc">${escapeHtml(idea.description || "")}</div>
+      <ul>${(idea.bullets || []).map((b) => `<li>${escapeHtml(b)}</li>`).join("")}</ul>
+      <button type="button" class="btn btn-secondary btn-sm" data-idea="${i}">Use this idea →</button>
+    </div>
+  `).join("");
+
+  grid.querySelectorAll("[data-idea]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const idea = ideas[btn.dataset.idea];
+      sessionStorage.setItem("wh_pending_idea", JSON.stringify(idea));
+      location.href = "/admin/upload.html";
+    });
+  });
+}
+
+function renderTrendNews(news) {
+  const wrap = document.getElementById("trend-news-wrap");
+  const list = document.getElementById("trend-news-list");
+  if (!news || news.length === 0) {
+    wrap.style.display = "none";
+    list.innerHTML = "";
+    return;
+  }
+  list.innerHTML = news.map((n) => `
+    <li>
+      <a href="${n.url}" target="_blank" rel="noopener noreferrer" style="color: var(--text-white); font-size: 13px; text-decoration: none;">
+        ${escapeHtml(n.title)}
+      </a>
+      ${n.source ? `<div style="font-size: 11px; color: var(--text-muted);">${escapeHtml(n.source)}</div>` : ""}
+    </li>
+  `).join("");
+  wrap.style.display = "block";
+}
+
+async function runTrendResearch(niche, { silent = false } = {}) {
+  const statusEl = document.getElementById("trend-status");
+  if (!silent) {
+    statusEl.classList.remove("error");
+    statusEl.textContent = "Researching current trends…";
+  }
+  document.getElementById("trend-search-btn").disabled = true;
+  document.getElementById("trend-refresh-btn").disabled = true;
+
+  try {
+    const data = await api("/admin/ai/trends", {
+      method: "POST",
+      body: JSON.stringify({ niche }),
+    });
+    renderTrendIdeas(data.ideas || []);
+    renderTrendNews(data.news || []);
+    statusEl.classList.remove("error");
+    statusEl.textContent = `Updated just now — ${(data.ideas || []).length} idea(s).`;
+    localStorage.setItem(TREND_CACHE_KEY, JSON.stringify({ niche, data, at: Date.now() }));
+  } catch (err) {
+    statusEl.classList.add("error");
+    statusEl.textContent = err.message || "Something went wrong.";
+  }
+  document.getElementById("trend-search-btn").disabled = false;
+  document.getElementById("trend-refresh-btn").disabled = false;
+}
+
+document.getElementById("trend-search-btn").addEventListener("click", () => {
+  const niche = document.getElementById("trend-query").value.trim();
+  if (!niche) {
+    const statusEl = document.getElementById("trend-status");
+    statusEl.classList.add("error");
+    statusEl.textContent = "Type a niche or category, or just use Refresh for a general scan.";
+    return;
+  }
+  runTrendResearch(niche);
+});
+
+document.getElementById("trend-refresh-btn").addEventListener("click", () => {
+  runTrendResearch(document.getElementById("trend-query").value.trim());
+});
+
+// Auto-run on every dashboard visit: show cached results instantly if they're fresh
+// (< 6h old), otherwise kick off a new AI + web-search run right away, no click needed.
+(function autoRunTrends() {
+  const cachedRaw = localStorage.getItem(TREND_CACHE_KEY);
+  let cached = null;
+  try { cached = cachedRaw ? JSON.parse(cachedRaw) : null; } catch {}
+
+  if (cached && cached.data && Date.now() - cached.at < TREND_CACHE_MAX_AGE_MS) {
+    document.getElementById("trend-query").value = cached.niche || "";
+    renderTrendIdeas(cached.data.ideas || []);
+    renderTrendNews(cached.data.news || []);
+    const mins = Math.round((Date.now() - cached.at) / 60000);
+    document.getElementById("trend-status").textContent =
+      mins < 1 ? "Updated just now." : `Last updated ${mins < 60 ? mins + "m" : Math.round(mins / 60) + "h"} ago — click Refresh for the latest.`;
+  } else {
+    runTrendResearch("", { silent: false });
+  }
+})();
+
+(async function () {
+  await requireLogin();
+  const data = await api("/admin/dashboard");
+
+  const stats = [
+    [data.visitorsToday, "Visitors today"],
+    [data.totalVisitors, "Total visitors"],
+    [data.totalPageViews, "Page views"],
+    [data.totalAffiliateClicks, "Affiliate clicks"],
+    [data.draftCount, "Drafts waiting"],
+    [data.publishedCount, "Published products"],
+    [data.unreadMessages, "Unread messages"],
+  ];
+  document.getElementById("stats-grid").innerHTML = stats
+    .map(([v, l]) => `<div class="stat-card"><div class="value">${v}</div><div class="label">${l}</div></div>`)
+    .join("");
+
+  const topBody = document.querySelector("#top-products-table tbody");
+  if (data.topProducts.length === 0) {
+    topBody.innerHTML = `<tr><td colspan="5" class="empty-state">No product views yet.</td></tr>`;
+  } else {
+    topBody.innerHTML = data.topProducts
+      .map(
+        (p) => `<tr>
+          <td><img class="thumb" src="${escapeHtml(p.image_url || '')}" onerror="this.style.visibility='hidden'"></td>
+          <td>${escapeHtml(p.title)}</td>
+          <td><span class="badge ${p.status}">${p.status}</span></td>
+          <td>${p.views}</td>
+          <td>${p.clicks}</td>
+        </tr>`
+      )
+      .join("");
+  }
+
+  const actBody = document.querySelector("#activity-table tbody");
+  if (data.recentActivity.length === 0) {
+    actBody.innerHTML = `<tr><td colspan="4" class="empty-state">No visits recorded yet.</td></tr>`;
+  } else {
+    actBody.innerHTML = data.recentActivity
+      .map((a) => {
+        const label =
+          a.event_type === "page_view" ? "Visited the site" :
+          a.event_type === "product_view" ? "Viewed a product" :
+          "Clicked an affiliate link";
+        return `<tr>
+          <td>Visitor #${escapeHtml(a.session_id.slice(0, 6))}</td>
+          <td>${label}</td>
+          <td>${a.product_title ? escapeHtml(a.product_title) : "—"}</td>
+          <td>${timeAgo(a.created_at)}</td>
+        </tr>`;
+      })
+      .join("");
+  }
+})();
+</script>
+</body>
+</html>

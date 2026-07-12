@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drafts | WolfHustler Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="brand">WOLFHUSTLER</div>
+    <a href="/admin/dashboard.html">Dashboard</a>
+    <a href="/admin/drafts.html" class="active">Drafts</a>
+    <a href="/admin/products.html">Published</a>
+    <a href="/admin/upload.html">Upload product</a>
+    <a href="/admin/settings.html">Pinterest settings</a>
+    <a href="/admin/messages.html">Messages</a>
+    <a href="#" class="logout-link">Log out (<span id="admin-username"></span>)</a>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-header">
+      <div>
+        <h1>Drafts</h1>
+        <p>New pins land here. Add an affiliate link and details, then publish.</p>
+      </div>
+      <button class="btn btn-secondary" id="sync-btn">Sync Pinterest now</button>
+    </div>
+
+    <div class="panel">
+      <table>
+        <thead><tr><th></th><th>Title</th><th>Source</th><th>Added</th><th></th></tr></thead>
+        <tbody id="drafts-body"><tr><td colspan="5" class="empty-state">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script src="admin.js"></script>
+<script>
+async function loadDrafts() {
+  const drafts = await api("/admin/products?status=draft");
+  const body = document.getElementById("drafts-body");
+  if (drafts.length === 0) {
+    body.innerHTML = `<tr><td colspan="5" class="empty-state">No drafts right now. New Pinterest pins will show up here automatically.</td></tr>`;
+    return;
+  }
+  body.innerHTML = drafts
+    .map(
+      (d) => `<tr>
+        <td><img class="thumb" src="${escapeHtml(d.image_url || '')}" onerror="this.style.visibility='hidden'"></td>
+        <td>${escapeHtml(d.title)}</td>
+        <td><span class="badge ${d.source}">${d.source}</span></td>
+        <td>${timeAgo(d.created_at)}</td>
+        <td><a class="btn btn-primary btn-sm" href="/admin/edit.html?id=${d.id}">Edit & publish</a></td>
+      </tr>`
+    )
+    .join("");
+}
+
+(async function () {
+  await requireLogin();
+  await loadDrafts();
+
+  document.getElementById("sync-btn").addEventListener("click", async () => {
+    const btn = document.getElementById("sync-btn");
+    btn.disabled = true;
+    btn.textContent = "Syncing…";
+    try {
+      const result = await api("/admin/pinterest/sync", { method: "POST" });
+      if (result.reason) {
+        showToast(result.reason === "Pinterest not connected or no board selected"
+          ? "Connect Pinterest in Settings first."
+          : result.reason);
+      } else {
+        showToast(`Synced: ${result.added} new draft(s), ${result.skipped} already existed.`);
+      }
+      await loadDrafts();
+    } catch (e) {
+      showToast(e.message);
+    }
+    btn.disabled = false;
+    btn.textContent = "Sync Pinterest now";
+  });
+})();
+</script>
+</body>
+</html>
